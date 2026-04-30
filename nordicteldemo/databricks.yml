@@ -1,0 +1,32 @@
+# This file defines the structure of this project and how it is deployed
+# to production using Declarative Automation Bundles.
+# See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
+bundle:
+  name: nordicteldemo
+  uuid: 0ae839ad-49cc-4aae-9923-e599903786d6
+
+include:
+  - resources/*.yml
+
+# Deployment targets.
+# The default schema, catalog, etc. for dbt are defined in dbt_profiles/profiles.yml
+targets:
+  dev:
+    # The default target uses 'mode: development' to create a development copy.
+    # - Deployed resources get prefixed with '[dev my_user_name]'
+    # - Any job schedules and triggers are paused by default.
+    # See also https://docs.databricks.com/dev-tools/bundles/deployment-modes.html.
+    mode: development
+    default: true
+    workspace:
+      host: https://adb-7405608960259103.3.azuredatabricks.net
+
+  prod:
+    mode: production
+    workspace:
+      host: https://adb-7405608960259103.3.azuredatabricks.net
+      # We explicitly deploy to /Workspace/Users/henrik.baugerod@bouvet.no to make sure we only have a single copy.
+      root_path: /Workspace/Users/henrik.baugerod@bouvet.no/.bundle/${bundle.name}/${bundle.target}
+    permissions:
+      - user_name: henrik.baugerod@bouvet.no
+        level: CAN_MANAGE
